@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ZenChef - AI-powered cooking platform with personalized meal plans, smart grocery lists, and pantry optimization | MiMo-Powered</title>
+<meta name="description" content="AI-powered cooking platform with personalized meal plans, smart grocery lists, and pantry optimization."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a;--bg-2:#0a0b15;--ink:#e8ecf6;--muted:#8a94b4;
+  --accent:#84cc16;--accent-2:#06b6d4;--accent-3:#3b82f6;
+  --line:rgba(255,255,255,.06);--card:rgba(255,255,255,.03);--card-hi:rgba(255,255,255,.06);--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;overflow-x:hidden;scroll-behavior:smooth}
+a{color:inherit;text-decoration:none}
+code,pre,.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.bg-canvas{position:fixed;inset:0;z-index:-2}
+.bg-grad{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 500px at 10% 10%,#84cc1625,transparent 60%),
+  radial-gradient(700px 500px at 90% 15%,#06b6d41a,transparent 60%),
+  radial-gradient(600px 500px at 40% 100%,#3b82f614,transparent 60%),
+  linear-gradient(180deg,#05060a,#080914)}
+.bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.1;
+  background-image:linear-gradient(#84cc1618 1px,transparent 1px),linear-gradient(90deg,#84cc1618 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(ellipse at 50% 20%,#000 25%,transparent 75%)}
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px) saturate(140%);background:rgba(5,6,10,.6);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1240px;margin:auto;padding:13px 28px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.logo{width:30px;height:30px;border-radius:8px;background:conic-gradient(from 140deg,#84cc16,#06b6d4,#3b82f6,#84cc16);box-shadow:0 0 20px #84cc1666,inset 0 0 10px rgba(255,255,255,.2);position:relative;overflow:hidden}
+.logo::after{content:"";position:absolute;inset:5px;border-radius:5px;background:#080914}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap;margin-left:6px}
+.nav-links a{padding:8px 11px;border-radius:9px;color:var(--muted);font-size:13.5px;transition:.2s}
+.nav-links a:hover{color:var(--ink);background:var(--card)}
+.nav-cta{margin-left:auto;display:flex;gap:10px}
+.btn{padding:10px 16px;border-radius:11px;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--card-hi);transform:translateY(-1px)}
+.btn-accent{background:linear-gradient(135deg,#84cc16,#06b6d4);border:none;color:#fff}
+.btn-accent:hover{filter:brightness(1.1);box-shadow:0 8px 30px #84cc1644}
+section{max-width:1240px;margin:0 auto;padding:90px 28px;position:relative}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);background:var(--card)}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+h1{font-size:clamp(38px,5.6vw,68px);line-height:1.06;letter-spacing:-.02em;font-weight:700;margin:18px 0}
+h2{font-size:clamp(26px,3.2vw,42px);line-height:1.1;letter-spacing:-.01em;font-weight:600;margin-bottom:14px}
+h3{font-size:19px;font-weight:600;margin-bottom:7px}
+p.lead{font-size:17px;color:var(--muted);max-width:660px;line-height:1.62}
+.grad-text{background:linear-gradient(135deg,#84cc16 0%,#06b6d4 40%,#3b82f6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero{padding-top:56px;padding-bottom:36px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr}}
+.hero-cta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px}
+.stat{padding:18px;border:1px solid var(--line);background:var(--card);border-radius:14px}
+.stat b{display:block;font-size:24px;font-weight:700}
+.stat span{color:var(--muted);font-size:13px}
+.code{border:1px solid var(--line);background:linear-gradient(180deg,rgba(14,12,20,.9),rgba(8,9,14,.9));border-radius:14px;overflow:hidden;box-shadow:0 28px 56px -16px rgba(0,0,0,.5),0 0 0 1px #84cc160d}
+.code-bar{display:flex;gap:6px;padding:11px 14px;border-bottom:1px solid var(--line);align-items:center}
+.dot-r{width:11px;height:11px;border-radius:50%}
+.dr1{background:#ff5f57}.dr2{background:#febc2e}.dr3{background:#28c840}
+.code-bar .file{margin-left:14px;color:var(--muted);font-size:12px}
+.code pre{padding:16px 18px;font-size:13px;line-height:1.58;color:#c4cfe2;overflow:auto;max-height:360px}
+.kw{color:#06b6d4}.fn{color:#84cc16}.str{color:#86efac}.cm{color:#4b5563;font-style:italic}.num{color:#3b82f6}
+.grid{display:grid;gap:16px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:880px){.grid-3,.grid-4,.grid-2{grid-template-columns:1fr}}
+.card{padding:22px;border:1px solid var(--line);background:var(--card);border-radius:var(--radius);transition:.25s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-3px);background:var(--card-hi);border-color:#84cc1633}
+.card .icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#84cc1630,#06b6d420);border:1px solid #84cc1640;font-size:19px;margin-bottom:13px}
+.card p{color:var(--muted);font-size:14px;line-height:1.6}
+.pipeline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:28px 0}
+.pipe-node{padding:14px 20px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-align:center;font-size:14px;font-weight:600}
+.pipe-arrow{color:var(--accent);font-size:22px}
+.timeline{position:relative;padding-left:34px;margin:28px 0}
+.timeline::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent),var(--accent-2),var(--accent-3))}
+.tl-item{position:relative;margin-bottom:26px}
+.tl-item::before{content:"";position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px #84cc1666}
+.metric{padding:24px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:center}
+.metric .val{font-size:36px;font-weight:700;margin:8px 0}
+.metric .label{color:var(--muted);font-size:13px}
+.metric canvas{display:block;margin:auto;width:100%;height:100px}
+.price{padding:26px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.price.hot{border-color:#84cc1666;background:linear-gradient(180deg,#84cc160d,#06b6d408);box-shadow:0 0 50px #84cc1618}
+.price h3{font-size:17px;color:var(--muted)}
+.price .amt{font-size:40px;font-weight:700;margin:5px 0 2px}
+.price ul{list-style:none;margin:16px 0}
+.price li{padding:7px 0;color:var(--muted);font-size:14px;display:flex;align-items:center;gap:9px}
+.price li::before{content:"\2713";color:var(--accent);font-weight:700}
+.ribbon{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:linear-gradient(135deg,#84cc16,#06b6d4);color:#fff}
+.tmpl{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--card);display:flex;gap:14px;align-items:flex-start}
+.tmpl:hover{border-color:#84cc1633}
+.tmpl .ico{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#84cc1620,#06b6d410);flex-shrink:0}
+.proof{padding:20px;background:#040508;border:1px solid var(--line);border-radius:12px;font-family:'JetBrains Mono';font-size:13px;color:#94a3b8;overflow:auto;line-height:1.6}
+.proof .ok{color:var(--accent)}
+.proof .info{color:var(--accent-2)}
+details{padding:16px 20px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:10px}
+details[open]{background:var(--card-hi)}
+details summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details summary::after{content:"+";font-size:20px;color:var(--accent)}
+details[open] summary::after{content:"-"}
+details p{color:var(--muted);margin-top:12px;line-height:1.6}
+footer{border-top:1px solid var(--line);padding:44px 28px 28px;background:rgba(5,6,10,.7);margin-top:56px}
+.foot-inner{max-width:1240px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px}
+@media(max-width:880px){.foot-inner{grid-template-columns:1fr 1fr}}
+.foot-inner h4{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}
+.foot-inner ul{list-style:none}
+.foot-inner li{margin:7px 0}
+.foot-inner li a{color:var(--muted);font-size:14px;transition:.2s}
+.foot-inner li a:hover{color:var(--ink)}
+.copy{text-align:center;color:var(--muted);font-size:13px;margin-top:32px;padding-top:18px;border-top:1px solid var(--line)}
+.link-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid #84cc1630;border-radius:999px;background:#84cc160d;font-size:13px;color:var(--accent);margin-top:14px;cursor:pointer;transition:.2s;width:fit-content}
+.link-banner:hover{background:#84cc1618}
+.eco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.eco-card{padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:center;transition:.2s}
+.eco-card:hover{border-color:#84cc1633}
+.eco-card .ico{font-size:32px;display:block;margin-bottom:10px}
+.eco-card h4{font-size:15px;margin-bottom:4px}
+.eco-card p{color:var(--muted);font-size:13px}
+.eco-card a{color:var(--accent);font-size:12px;margin-top:8px;display:inline-block}
+.chip{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-family:'JetBrains Mono';font-size:12px;color:var(--muted);background:var(--card)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+.div-line{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:56px 0}
+</style>
+</head>
+<body>
+<canvas class="bg-canvas" id="bgCanvas"></canvas>
+<div class="bg-grad"></div>
+<div class="bg-grid"></div>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="#" class="brand"><div class="logo"></div> ZenChef</a>
+  <div class="nav-links">
+    <a href="#features">Features</a><a href="#workflow">Workflow</a><a href="#monitoring">Monitoring</a>
+    <a href="#usecases">Use Cases</a><a href="#pricing">Pricing</a><a href="#docs">Docs</a>
+    <a href="#templates">Templates</a><a href="#blog">Blog</a><a href="#faq">FAQ</a><a href="#ecosystem">Ecosystem</a>
+  </div>
+  <div class="nav-cta">
+    <a class="btn" href="#docs">Sign in</a>
+    <a class="btn btn-accent" href="#pricing">Start free</a>
+  </div>
+</div></nav>
+
+<section class="hero" id="top"><div class="hero-grid">
+  <div class="reveal">
+    <span class="eyebrow"><span class="dot"></span> Now powered by MiMo - 100T Token Initiative</span>
+    <h1>Recipes & meal plans, <span class='grad-text'>AI-curated</span></h1>
+    <p class="lead">AI-powered cooking platform with personalized meal plans, smart grocery lists, and pantry optimization.</p>
+    <div class="hero-cta">
+      <a class="btn btn-accent" href="#pricing">Start building free</a>
+      <a class="btn" href="#workflow">See how it works</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px"><a class="link-banner" href="https://nebulacraft-ai-studio.vercel.app" target="_blank">⚡ NebulaCraft sister: NebulaCraft →</a><a class="link-banner" href="https://quantumflow-automation.vercel.app" target="_blank">🔥 QuantumFlow sister: QuantumFlow →</a><a class="link-banner" href="https://pulsarops-devops-copilot.vercel.app" target="_blank">📡 PulsarOps sister: PulsarOps →</a></div>
+    <div class="stats"><div class="stat"><b>2.4M+</b><span>operations / month</span></div><div class="stat"><b>14k</b><span>active developers</span></div><div class="stat"><b>99.97%</b><span>uptime SLA</span></div><div class="stat"><b>&lt;200ms</b><span>median latency</span></div></div>
+  </div>
+  <div class="reveal">
+    <div class="code">
+      <div class="code-bar"><span class="dot-r dr1"></span><span class="dot-r dr2"></span><span class="dot-r dr3"></span><span class="file mono">~/zenith-recipe-app/studio.ts</span></div>
+      <pre><span class="cm"># Quickstart for ZenChef</span>
+<span class="kw">import</span> { Studio } <span class="kw">from</span> <span class="str">"zenith-recipe-app"</span>;
+
+<span class="kw">const</span> studio = <span class="kw">new</span> <span class="fn">Studio</span>({
+  model: <span class="str">"mimo-v2.5-pro"</span>,
+  domain: <span class="str">"lifestyle/food-tech"</span>,
+});
+
+<span class="kw">const</span> result = <span class="kw">await</span> studio.<span class="fn">execute</span>({
+  goal: <span class="str">"Build my lifestyle/food-tech pipeline"</span>,
+  auto_optimize: <span class="num">true</span>,
+});
+
+<span class="fn">console</span>.log(result.summary);
+<span class="cm">// =&gt; 14 steps deployed - 32 tests pass - live</span></pre>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><span class="chip">codex</span><span class="chip">claude-code</span><span class="chip">cursor</span></div>
+  </div>
+</div></section>
+
+<section id="features" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Capabilities</span>
+  <h2>Everything your lifestyle/food-tech stack needs</h2>
+  <p class="lead">AI-powered cooking platform with personalized meal plans, smart grocery lists, and pantry optimization.</p>
+  <div class="grid grid-3" style="margin-top:32px"><div class="card"><div class="icon">AI</div><h3>AI Lifestyle/Food-Tech Designer</h3><p>Describe what you want in plain English. MiMo plans, builds, and ships your lifestyle/food-tech workflow end-to-end.</p></div><div class="card"><div class="icon">FLOW</div><h3>Visual Builder</h3><p>Drag-and-drop canvas with branch, loop, and parallel execution. Real-time preview at every step.</p></div><div class="card"><div class="icon">API</div><h3>200+ Connectors</h3><p>First-party maintained integrations with Stripe, Slack, GitHub, Notion, PostgreSQL, S3, and 190+ more.</p></div><div class="card"><div class="icon">RUN</div><h3>Sandboxed Runtime</h3><p>Every step runs in an isolated container. Build and test before any production-side effect.</p></div><div class="card"><div class="icon">LOG</div><h3>Audit Trail</h3><p>Every action logged, signed, and reversible. Full lineage from input to output.</p></div><div class="card"><div class="icon">SEC</div><h3>Vault Secrets</h3><p>Per-project encrypted vault. Secrets never enter model context - referenced by handle only.</p></div><div class="card"><div class="icon">CHK</div><h3>Auto Testing</h3><p>Property-based + unit tests generated alongside every workflow. Coverage reports baked in.</p></div><div class="card"><div class="icon">MTL</div><h3>Live Telemetry</h3><p>Real-time dashboards with AI-annotated anomalies. Plug in Prometheus, Datadog, or OpenTelemetry.</p></div><div class="card"><div class="icon">DEP</div><h3>1-Click Deploy</h3><p>Push to Vercel, Fly, Railway, AWS, or your own Kubernetes cluster with type-checked IaC.</p></div></div>
+</section>
+<div class="div-line"></div>
+
+<section id="workflow" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Workflow</span>
+  <h2>How ZenChef flows end-to-end</h2>
+  <p class="lead">From input to output, every step is observable, testable, and reversible.</p>
+  <div class="pipeline">
+    <div class="pipe-node">Ingest</div><span class="pipe-arrow">-&gt;</span>
+    <div class="pipe-node">Analyze</div><span class="pipe-arrow">-&gt;</span>
+    <div class="pipe-node">Transform</div><span class="pipe-arrow">-&gt;</span>
+    <div class="pipe-node">Deliver</div><span class="pipe-arrow">-&gt;</span>
+    <div class="pipe-node">Verify</div>
+  </div>
+  <div class="proof">
+<span class="info">[zenchef]</span> pipeline "lifestyle/food-tech" compiled <span class="ok">OK</span>
+<span class="info">[09:15:01]</span> trigger: api.webhook /inbound <span class="ok">connected</span>
+<span class="info">[09:15:02]</span> step 1: ingest -&gt; <span class="ok">47 records</span>
+<span class="info">[09:15:03]</span> step 2: analyze (mimo-v2.5-pro) -&gt; <span class="ok">classified</span>
+<span class="info">[09:15:05]</span> step 3: transform -&gt; <span class="ok">47/47 ok</span>
+<span class="info">[09:15:06]</span> step 4: deliver -&gt; <span class="ok">sent to 3 targets</span>
+<span class="ok">[09:15:06]</span> pipeline done - 4.8s - 0.0003 USD - 0 retries
+  </div>
+</section>
+<div class="div-line"></div>
+
+<section id="monitoring" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Monitoring</span>
+  <h2>Real-time performance at a glance</h2>
+  <p class="lead">Live dashboards with AI-annotated anomalies. Every spike has context.</p>
+  <div class="grid grid-4" style="margin-top:28px"><div class="metric"><span class="label">operations / month</span><div class="val" style="color:#84cc16">2.4M+</div><canvas id="m1"></canvas></div><div class="metric"><span class="label">active developers</span><div class="val" style="color:#06b6d4">14k</div><canvas id="m2"></canvas></div><div class="metric"><span class="label">uptime SLA</span><div class="val" style="color:#3b82f6">99.97%</div><canvas id="m3"></canvas></div><div class="metric"><span class="label">median latency</span><div class="val" style="color:#84cc16">&lt;200ms</div><canvas id="m4"></canvas></div></div>
+</section>
+<div class="div-line"></div>
+
+<section id="usecases" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Use Cases</span>
+  <h2>Teams shipping with ZenChef</h2>
+  <div class="timeline"><div class="tl-item"><h3>E-commerce - Black Friday traffic surge - ZenChef auto-scaled 12 services in 90 seconds, maintained 99.99% uptime during 8x normal traffic, and saved 4,200 USD by scaling down at 4am.</h3></div><div class="tl-item"><h3>Fintech - Regression caught in canary - A migration caused p99 to jump 3x in canary traffic. ZenChef halted rollout, opened a PR with the fix, and merged after engineer approval - all in 6 minutes.</h3></div><div class="tl-item"><h3>Healthcare - Compliance drift detection - Detected an unauthorized policy change, reverted via Terraform, and generated a compliance report for SOC 2 audit within 4 minutes.</h3></div><div class="tl-item"><h3>Gaming - Live tournament protection - During a 50k-player tournament, a memory leak triggered OOM kills. ZenChef detected the pattern, rolled the deployment, and kept the tournament running.</h3></div></div>
+</section>
+<div class="div-line"></div>
+
+<section id="pricing" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Pricing</span>
+  <h2>Pay for what you use</h2>
+  <p class="lead">Transparent, usage-based pricing with predictable monthly caps.</p>
+  <div class="grid grid-3" style="margin-top:32px">
+    <div class="price"><h3>Starter</h3><div class="amt">$0<span style="font-size:14px;color:var(--muted)">/mo</span></div><ul>
+      <li>1,000 ops / month</li><li>3 projects</li><li>Community support</li><li>Public repos only</li></ul>
+      <a class="btn" href="#" style="width:100%;justify-content:center">Get started</a></div>
+    <div class="price hot"><span class="ribbon">Popular</span><h3>Pro</h3><div class="amt">$39<span style="font-size:14px;color:var(--muted)">/mo</span></div><ul>
+      <li>100k ops / month</li><li>Unlimited projects</li><li>Priority routing</li><li>Custom system prompts</li><li>Private repos</li></ul>
+      <a class="btn btn-accent" href="#" style="width:100%;justify-content:center">Start 14-day trial</a></div>
+    <div class="price"><h3>Enterprise</h3><div class="amt">$199<span style="font-size:14px;color:var(--muted)">/mo</span></div><ul>
+      <li>Unlimited ops</li><li>Multi-region</li><li>SOC 2 controls</li><li>SSO + SCIM</li><li>Dedicated support + SLA</li></ul>
+      <a class="btn" href="#" style="width:100%;justify-content:center">Talk to sales</a></div>
+  </div>
+</section>
+<div class="div-line"></div>
+
+<section id="docs" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Quickstart</span>
+  <h2>Ship in 60 seconds</h2>
+  <div class="grid grid-2" style="margin-top:28px">
+    <div class="code"><div class="code-bar"><span class="dot-r dr1"></span><span class="dot-r dr2"></span><span class="dot-r dr3"></span><span class="file mono">install.sh</span></div>
+<pre><span class="cm"># Install the CLI</span>
+$ curl -fsSL zenith-recipe-app.dev/install | sh
+
+<span class="cm"># Authenticate</span>
+$ zenchef auth login
+
+<span class="cm"># Initialize project</span>
+$ zenchef init --model mimo-v2.5-pro
+<span class="ok">Project ready in ~/zenith-recipe-app</span>
+</pre></div>
+    <div class="code"><div class="code-bar"><span class="dot-r dr1"></span><span class="dot-r dr2"></span><span class="dot-r dr3"></span><span class="file mono">first-task.ts</span></div>
+<pre><span class="kw">import</span> { Studio } <span class="kw">from</span> <span class="str">"zenith-recipe-app"</span>;
+
+<span class="kw">const</span> s = <span class="kw">new</span> <span class="fn">Studio</span>({ model: <span class="str">"mimo-v2.5-pro"</span> });
+
+<span class="kw">const</span> result = <span class="kw">await</span> s.<span class="fn">run</span>({
+  goal: <span class="str">"Set up lifestyle/food-tech pipeline"</span>,
+  auto: <span class="num">true</span>,
+});
+
+console.<span class="fn">log</span>(result.url);
+<span class="cm">// =&gt; https://zenith-recipe-app.vercel.app/dashboard</span>
+</pre></div>
+  </div>
+</section>
+<div class="div-line"></div>
+
+<section id="templates" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Templates</span>
+  <h2>Start from a template, customize everything</h2>
+  <p class="lead">Pre-built starting points for common lifestyle/food-tech workflows. Fork, edit, ship.</p>
+  <div class="grid grid-2" style="margin-top:28px"><div class="tmpl"><div class="ico">CART</div><div><h3>E-commerce Order Pipeline</h3><p>Payment verify, fulfillment, receipt, analytics. Handles digital and physical lifestyle/food-tech goods with branching logic.</p></div></div><div class="tmpl"><div class="ico">USR</div><div><h3>User Onboarding Flow</h3><p>Signup, welcome email, CRM create, trial expiry reminder, upgrade nudge sequence.</p></div></div><div class="tmpl"><div class="ico">BUG</div><div><h3>Incident Response Bot</h3><p>Alert received, classify severity, page oncall, create Jira, post-mortem template.</p></div></div><div class="tmpl"><div class="ico">PUB</div><div><h3>Content Publishing Pipeline</h3><p>Draft, AI review, schedule, publish to lifestyle/food-tech platforms, track engagement, weekly report.</p></div></div><div class="tmpl"><div class="ico">INV</div><div><h3>Invoice and Collections</h3><p>Generate invoice, send, track opens, escalate overdue, write off after 90 days.</p></div></div><div class="tmpl"><div class="ico">SYN</div><div><h3>Data Sync Engine</h3><p>Sync between Notion / Airtable / PostgreSQL with conflict resolution and audit log.</p></div></div></div>
+</section>
+<div class="div-line"></div>
+
+<section id="blog" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Engineering Blog</span>
+  <h2>What we're learning, in public</h2>
+  <div class="grid grid-3" style="margin-top:28px">
+    <div class="card"><div class="icon">N</div><h3>How we optimized lifestyle/food-tech pipelines with MiMo</h3><p>Deep dive into how MiMo Pro plans, executes, and self-corrects lifestyle/food-tech workflows with tool-use loops.</p><p class="mono" style="margin-top:12px;font-size:12px;color:var(--accent)">May 18 - 9 min</p></div>
+    <div class="card"><div class="icon">B</div><h3>Building reliable connectors at scale</h3><p>How we maintain type-safe connectors across lifestyle/food-tech APIs with automated contract testing.</p><p class="mono" style="margin-top:12px;font-size:12px;color:var(--accent)">May 11 - 7 min</p></div>
+    <div class="card"><div class="icon">S</div><h3>Sub-second execution with warm pools</h3><p>Edge architecture: pre-warmed containers, predictive scaling, and MiMo-driven cache priming.</p><p class="mono" style="margin-top:12px;font-size:12px;color:var(--accent)">May 4 - 6 min</p></div>
+  </div>
+</section>
+<div class="div-line"></div>
+
+<section id="faq" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> FAQ</span>
+  <h2>Common questions</h2>
+  <div style="margin-top:24px;max-width:860px"><details open><summary>How does ZenChef differ from existing tools?</summary><p>ZenChef adds an AI designer (describe in English to executable workflow), MiMo-powered optimization, custom code nodes with full dependency support, and sub-second execution with warm pools.</p></details><details><summary>What happens if a step fails?</summary><p>Configurable retries with exponential backoff, dead-letter queues, and human-in-the-loop approval gates. Every failure is logged with full context for debugging.</p></details><details><summary>Can I use my own code in workflows?</summary><p>Yes. Custom code nodes support Python, JavaScript, and shell scripts with full npm/pip dependency resolution in isolated sandboxes.</p></details><details><summary>Which models does it use?</summary><p>MiMo Pro (default for planning), Claude Sonnet (long-form reasoning), DeepSeek V3 (math/code). Bring your own model via OpenAI-compatible endpoint.</p></details><details><summary>Is my data secure?</summary><p>All data encrypted in transit (TLS 1.3) and at rest (AES-256). Per-workflow secret vault. SOC 2 Type II certified. Multi-region deployment for data residency.</p></details></div>
+</section>
+<div class="div-line"></div>
+
+<section id="ecosystem" class="reveal">
+  <span class="eyebrow"><span class="dot"></span> Ecosystem</span>
+  <h2>Part of a complete AI-native stack</h2>
+  <p class="lead">ZenChef is part of an integrated ecosystem built on MiMo-Series. Together they cover the full dev-to-ops-to-automation lifecycle.</p>
+  <div class="eco-grid"><div class="eco-card"><span class="ico">⚡ NebulaCraft</span><h4>AI Code Synthesis Studio</h4><p>AI Code Synthesis Studio</p><a href="https://nebulacraft-ai-studio.vercel.app" target="_blank">Visit NebulaCraft →</a></div><div class="eco-card"><span class="ico">🔥 QuantumFlow</span><h4>AI Workflow Automation Engine</h4><p>AI Workflow Automation Engine</p><a href="https://quantumflow-automation.vercel.app" target="_blank">Visit QuantumFlow →</a></div><div class="eco-card"><span class="ico">📡 PulsarOps</span><h4>AI DevOps Copilot</h4><p>AI DevOps Copilot</p><a href="https://pulsarops-devops-copilot.vercel.app" target="_blank">Visit PulsarOps →</a></div></div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="brand"><div class="logo"></div> ZenChef</div>
+      <p style="color:var(--muted);font-size:13.5px;margin-top:12px;max-width:330px">AI-powered cooking platform with personalized meal plans, smart grocery lists, and pantry optimization. Part of the 100T Token Initiative.</p>
+    </div>
+    <div><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#workflow">Workflow</a></li><li><a href="#monitoring">Monitoring</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
+    <div><h4>Resources</h4><ul><li><a href="#docs">Docs</a></li><li><a href="#blog">Blog</a></li><li><a href="#templates">Templates</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Careers</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
+  </div>
+  <div class="copy">(c) 2026 ZenChef - Built with MiMo - 100T Token Initiative - <a href="https://nebulacraft-ai-studio.vercel.app" style="color:var(--accent)">NebulaCraft</a> · <a href="https://quantumflow-automation.vercel.app" style="color:var(--accent)">QuantumFlow</a> · <a href="https://pulsarops-devops-copilot.vercel.app" style="color:var(--accent)">PulsarOps</a></div>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('in')),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+function sparkline(id,color,data){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d'),dpr=devicePixelRatio||1;
+  c.width=c.offsetWidth*dpr;c.height=100*dpr;ctx.scale(dpr,dpr);
+  const w=c.offsetWidth,h=100,pad=4,max=Math.max(...data),min=Math.min(...data),rng=max-min||1;
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=pad+i*(w-pad*2)/(data.length-1);
+    const y=h-pad-((v-min)/rng)*(h-pad*2);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+  ctx.lineTo(pad+(data.length-1)*(w-pad*2)/(data.length-1),h);
+  ctx.lineTo(pad,h);ctx.closePath();
+  ctx.fillStyle=color+'14';ctx.fill();
+}
+sparkline('m1','#84cc16',[40,52,48,61,73,90,82,75,68,62]);
+sparkline('m2','#06b6d4',[12,14,11,13,15,18,16,14,13,12]);
+sparkline('m3','#3b82f6',[99.9,99.92,99.95,99.97,99.96,99.98,99.99,99.97,99.98,99.98]);
+sparkline('m4','#84cc16',[800,750,720,680,650,620,590,560,540,520]);
+
+(()=>{
+  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
+  let w,h,nodes=[];
+  function resize(){
+    w=c.width=innerWidth*devicePixelRatio;
+    h=c.height=innerHeight*devicePixelRatio;
+    c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+    nodes=Array.from({length:140},()=>({
+      x:Math.random()*w,y:Math.random()*h,
+      vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,
+      r:Math.random()*1.2+.4,
+      hue:Math.random()*40+83
+    }));
+  }
+  resize();addEventListener('resize',resize);
+  function loop(){
+    ctx.clearRect(0,0,w,h);
+    for(const n of nodes){
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>w)n.vx*=-1;
+      if(n.y<0||n.y>h)n.vy*=-1;
+      ctx.beginPath();
+      ctx.fillStyle=`hsla(${n.hue},100%,65%,.4)`;
+      ctx.arc(n.x,n.y,n.r*devicePixelRatio,0,Math.PI*2);
+      ctx.fill();
+    }
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<130*devicePixelRatio){
+          ctx.strokeStyle='#84cc16'+Math.floor((1-d/(130*devicePixelRatio))*30).toString(16).padStart(2,'0');
+          ctx.lineWidth=devicePixelRatio*.4;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
